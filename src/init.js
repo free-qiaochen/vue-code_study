@@ -1,10 +1,12 @@
 import { initState } from "./state";
-
+import {compileToFunction} from './compiler/index'
+import { mountComponent } from "./lifecycle";
 
 
 export function initMixin (Vue) {
-  Vue.prototype._init = function(options) {
+  Vue.prototype._init = function (options) {
     const vm = this;
+    console.log('vm:', vm)
     vm.$options = options;  // 后面会对options进行扩展操作
     // 数据初始化：
     initState(vm);  // 劫持vm.$options.data
@@ -14,20 +16,20 @@ export function initMixin (Vue) {
     }
 
   }
-  Vue.prototype.$mount = function(el) {
+  Vue.prototype.$mount = function (el) {
     const vm = this;
     const options = vm.$options
     el = document.querySelector(el)
     vm.$el = el
-    if(!option.render){
+    if (!options.render) {
       let template = options.template
       if (!template && el) {
         template = el.outerHTML;
-        let render = compileToFunction(template)
+        let render = compileToFunction(template);
         options.render = render
       }
     }
     // 
-    mountComponent(vm,el) // 组件的挂载流程
+    mountComponent(vm, el) // 组件的挂载流程
   }
 }

@@ -8,7 +8,25 @@
 </head>
 
 <body>
-
+  <div id="app" a=1 style="color:red;background:#333;">
+    hello {{arr}} world
+    <p>111</p>
+  </div>
+  <script src="../dist/vue.js"></script>
+  <script>
+    let vm = new Vue({
+      data() {
+        // this = vm
+        return {
+          arr: {
+            name: 'zf'
+          },
+          test: 'test 1'
+        }
+      }
+    })
+    vm.$mount('#app')
+  </script>
 </body>
 
 </html>

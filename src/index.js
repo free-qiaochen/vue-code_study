@@ -1,6 +1,7 @@
 import { initMixin } from './init'
 function Vue (options) {
   // options 是用户传入的选项
+  console.log('options:', options)
   this._init(options);  // 初始化操作
 }
 

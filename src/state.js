@@ -1,9 +1,9 @@
 
 import { isFunction } from './utils'
-import { observe } from './observer'
+import { observe } from './observer/index'
 
 export function initState (vm) {
-  const opts = vm.options
+  const opts = vm.$options
   if (opts.data) {
     initData(vm)
   }

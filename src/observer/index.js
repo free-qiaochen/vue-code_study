@@ -1,5 +1,6 @@
-import { isObject } from "./utils";
+
 import { arrayMethods } from "./array";
+import { isObject } from "../utils";
 
 
 class Observer {
@@ -44,7 +45,7 @@ function defineReactive (data, key, value) {
 }
 
 export function observe (data) {
-  // 如果是对象才观测
+  // 如果是对象（array和object）才观测
   if (!isObject(data)) {
     return;
   }
