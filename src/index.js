@@ -1,4 +1,6 @@
-import { initMixin } from './init'
+import { initMixin } from "./init";
+import { lifecycleMixin } from "./lifecycle";
+import { renderMixin } from './render'
 function Vue (options) {
   // options 是用户传入的选项
   console.log('options:', options)
@@ -8,8 +10,8 @@ function Vue (options) {
 // 原型扩展
 initMixin(Vue)
 
-// renderMixin(Vue) // _render
-// lifecycle(Vue)  // _update
+renderMixin(Vue)// _render
+lifecycleMixin(Vue)  // _update
 export default Vue
 
 // 初次渲染过程：

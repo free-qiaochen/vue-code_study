@@ -17,7 +17,7 @@ vm.$mount('#app')
 ## 流程：
 
 ```js
-//响应式流程： new Vue()-- > this._init(options)-->1.initState(vm)-->initData(vm)-->observe(data)-->new Observer(data)--> observeArray(data),walk(data)/遍历data对象defineReactive(data,key,data[key])-->observe(value),Object.defineProperty(data,key,handlers)--(set中用户新赋值的数据也要observe(newVal)进行响应化处理)---->
+//响应式流程： new Vue()-- > this._init(options)-->1.initState(vm)-->initData(vm)-->observe(data)-->new Observer(data)--> observeArray(data),walk(data)/遍历data对象defineReactive(data,key,data[key])-->observe(value)会深层劫持,Object.defineProperty(data,key,handlers)属性劫持--(set中用户新赋值的数据也要observe(newVal)进行响应化处理)---->
 
 // 初次渲染
 //数据挂载到模板上：this._init()--有el会自动执行$mount(),否则要手动mount--->2.$mount(el)-->render=compileToFunction(template),mountComponent(vm,el)----->updateComponent()--->vm._update(vm_render()?)---->patch(vm.$el,vnode)---->patch会用vnode来生成真实dom，替换el原本的dom元素！

@@ -32,6 +32,7 @@ class Observer {
 }
 function defineReactive (data, key, value) {
   observe(value)  // value如果是对象（普通值会直接返回），会继续递归劫持
+  console.log('deficeReactive:key', key)
   Object.defineProperty(data, key, {
     get () {
       return value
