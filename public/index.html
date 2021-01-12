@@ -9,7 +9,7 @@
 
 <body>
   <div id="app" a=1 style="color:red;background:#333;">
-    hello {{arr}} world
+    hello {{obj0}}{{arr0}} world
     <p>111</p>
   </div>
   <script src="../dist/vue.js"></script>
@@ -18,9 +18,10 @@
       data() {
         // this = vm
         return {
-          arr: {
+          obj0: {
             name: 'zf'
           },
+          arr0: [1, 2, 3],
           test: 'test 1'
         }
       }

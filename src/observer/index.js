@@ -53,6 +53,6 @@ export function observe (data) {
   if (data.__ob__) {
     return; // 观测过的数据上有__ob__属性，不重复观测
   }
-  // 
+  // 默认最外层的data必须是一个对象，所以data一定会走Observer
   return new Observer(data);
 }
