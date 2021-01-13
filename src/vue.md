@@ -33,3 +33,42 @@ vm.$mount('#app')
 
 // 组件化
 ```
+
+## 更新和依赖收集
+
+- 在没有更新机制前，每次数据变化需要手动 render，update，进行页面全量重渲染
+
+### 创建渲染 Watcher
+
+1. 初始化渲染 Watcher
+
+```js
+let updateComponent = () => {
+  // 调用render函数，生成虚拟dom
+  vm._update(vm._render()) // 后续更新可以调用updateComponent方法
+  // 用虚拟dom 生成真实dom
+}
+new Watcher(vm, updateComponent, () => {}, true)
+// 初始化Watcher实例会调用updateComponent()
+// 执行render()生成虚拟dom
+// update执行，调用patch()生成真实dom
+Vue.prototype._update = function (vnode) {
+  const vm = this
+  vm.$el = patch(vm.$el, vnode)
+}
+```
+
+2. 生成虚拟 dom
+3. 生成真实 dom 挂载
+
+### 依赖收集
+
+> 每个属性都要有一个 dep,每个 dep 中存放着 watcher,同一个 watcher 会被多个 dep 所记录
+
+1. 在渲染时存储 watcher
+2. 对象依赖收集
+3. 数组依赖收集
+
+## 更新去抖动，合并 ing
+
+？？？

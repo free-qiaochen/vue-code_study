@@ -10,7 +10,7 @@
 <body>
   <div id="app" a=1 style="color:red;background:#333;">
     hello {{obj0}}{{arr0}} world
-    <p>111</p>
+    <p>111{{name}}</p>
   </div>
   <script src="../dist/vue.js"></script>
   <script>
@@ -22,11 +22,26 @@
             name: 'zf'
           },
           arr0: [1, 2, 3],
-          test: 'test 1'
+          test: 'test 1',
+          name: 'name',
         }
       }
     })
     vm.$mount('#app')
+    // 数据变化需要影响视图 , 数据和页面渲染关联起来
+    setTimeout(() => {
+      vm.name = 'hello';
+      vm.name = 'zf';
+      vm.name = 'hello';
+      // vm.name = 123;
+      vm.arr0 = [1, 2]
+
+      // vm.$nextTick(() => {
+      //   console.log(vm.$el)
+      // })
+      // 在没有更新机制前，每次数据变化可以手动render，update，进行页面全量重渲染
+      // vm._update(vm._render()); // 重新调用render方法产生虚拟dom， 目前还没有diff
+    }, 5000);
   </script>
 </body>
 
