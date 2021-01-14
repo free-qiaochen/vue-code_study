@@ -21,7 +21,7 @@
           obj0: {
             name: 'zf'
           },
-          arr0: [1, 2, 3],
+          arr0: [1, 2, 3, [1, 2]],
           test: 'test 1',
           name: 'name',
         }
@@ -30,18 +30,20 @@
     vm.$mount('#app')
     // 数据变化需要影响视图 , 数据和页面渲染关联起来
     setTimeout(() => {
-      vm.name = 'hello';
-      vm.name = 'zf';
-      vm.name = 'hello';
+      // vm.name = 'hello';
+      // vm.name = 'zf';
+      // vm.name = 'hello';
       // vm.name = 123;
-      vm.arr0 = [1, 2]
-
+      // vm.arr0 = [1, 2, 3]  // 该方式会在实现数组的dep.notify()之前更新，（外层对象收集的dep？）
+      // vm.arr0.push('hello');
+      vm.arr0.splice(1, 2, 'xx')
+      console.log('改数据！')
       // vm.$nextTick(() => {
       //   console.log(vm.$el)
       // })
       // 在没有更新机制前，每次数据变化可以手动render，update，进行页面全量重渲染
       // vm._update(vm._render()); // 重新调用render方法产生虚拟dom， 目前还没有diff
-    }, 5000);
+    }, 2000);
   </script>
 </body>
 

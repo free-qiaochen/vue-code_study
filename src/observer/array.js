@@ -33,5 +33,7 @@ methods.forEach(method => {
     if (inserted) {
       ob.observeArray(inserted)
     }
+    // 数组派发更新
+    ob.dep.notify();
   }
 })
