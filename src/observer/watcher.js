@@ -1,4 +1,5 @@
 import { popTarget, pushTarget } from "./dep";
+import { queueWatcher } from "./scheduler";
 
 let id = 0
 // new Watcher(vm,updateComponent,()=>{
@@ -22,12 +23,14 @@ class Watcher {
     // defineProperty.get,每个属性都可以收集自己的watcher，
     // 希望一个属性可以对应多个watcher，同时一个watcher可以对应多个属性
     pushTarget(this); // Dep.target=watcher
+    console.log('run更新！');
     this.getter();  // 调用vm._update(vm._render());render（）方法，会去vm上取值，
     popTarget();  // Dep.target = null,如果Dep.target有值，说明在Watcher中使用了，（页面用到了）
   }
-  update () {// vue中的更新操作是异步的
-    console.log('更新！')
-    this.run()
+  update () {// vue中的更新操作是异步的，
+    console.log('调用update了')
+    // this.run()
+    queueWatcher(this);// 多次调用update,希望先将watcher缓存下来，等同步代码结束后批量更新
   }
   run () {  //??
     this.get()

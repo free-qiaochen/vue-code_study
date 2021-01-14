@@ -49,7 +49,7 @@ let updateComponent = () => {
   // 用虚拟dom 生成真实dom
 }
 new Watcher(vm, updateComponent, () => {}, true)
-// 初始化Watcher实例会调用updateComponent()
+// 初始化Watcher实例会调用updateComponent(),实现首次渲染；（后续页面需要更新执行updateComponent即可）
 // 执行render()生成虚拟dom
 // update执行，调用patch()生成真实dom
 Vue.prototype._update = function (vnode) {
@@ -71,4 +71,5 @@ Vue.prototype._update = function (vnode) {
 
 ## 更新去抖动，合并 ing
 
-？？？
+> 依赖变化触发对应 dep:dep.notify()，进而触发收集 watcher（可能多个）的 update 进行更新
+> 这里 update 处做批量更新策略：queueWatcher(this);多次调用 update,希望先将 watcher 缓存下来，等同步代码结束后批量更新，里边调用了 nextTick
