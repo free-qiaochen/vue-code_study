@@ -7,25 +7,45 @@ let id = 0
 // },true); 
 
 class Watcher {
-  constructor(vm, updateComponent, cb, options) {
+  constructor(vm, expressOrFn, cb, options) {
     this.vm = vm;
-    this.expOrFn = updateComponent;
+    this.expOrFn = expressOrFn;
+    // ---watch，computed新加属性---
+    this.user = !!options.user;// 是否是用户watcher，
+    this.lazy = !!options.lazy;
+    this.dirty = options.dirty; // 如果是计算属性的watcher，默认lazy:true,dirty:true;
     this.cb = cb;
     this.options = options;
     this.id = id++
-    // 默认初始化实例时，需要updateComponent函数执行，里边会走render和update，render会去vm上取值
-    this.getter = updateComponent;
+    if (typeof expressOrFn === 'string') {
+      // 是字符串时（watch的key），将表达式转化为函数
+      this.getter = function () {
+        // 当我取数据值时，会进行依赖收集；（age.n;vm['age.n'] -> vm['age']['n']）
+        let path = expressOrFn.split('.')
+        let obj = vm;
+        for (let i = 0; i < path.length; i++) {
+          obj = obj[path[i]]
+        }
+        console.log('watch obj:', obj)
+        return obj; // getter方法？？？
+      }
+    } else {
+      // 默认初始化实例时，需要updateComponent函数执行，里边会走render和update，render会去vm上取值
+      this.getter = expressOrFn;
+    }
     this.deps = []; // 用来存放dep
     this.depsId = new Set();
-    this.get();  // 初始化，走get方法，
+    // 初始化，走get方法; 存value作为watch的oldValue
+    this.value = this.lazy ? undefined : this.get();
   }
   get () {  // 稍后更新时，可以重新调用getter方法，
     // defineProperty.get,每个属性都可以收集自己的watcher，
     // 希望一个属性可以对应多个watcher，同时一个watcher可以对应多个属性
     pushTarget(this); // Dep.target=watcher
-    console.log('run更新！');
-    this.getter();  // 调用vm._update(vm._render());render（）方法，会去vm上取值，
+    // console.log('run更新！');
+    const value = this.getter(this.vm);  // 调用vm._update(vm._render());render（）方法，会去vm上取值，
     popTarget();  // Dep.target = null,如果Dep.target有值，说明在Watcher中使用了，（页面用到了）
+    return value
   }
   update () {// vue中的更新操作是异步的，
     console.log('调用update了')
@@ -33,7 +53,12 @@ class Watcher {
     queueWatcher(this);// 多次调用update,希望先将watcher缓存下来，等同步代码结束后批量更新
   }
   run () {  //??
-    this.get()
+    let newValue = this.get();
+    let oldValue = this.value;
+    if (this.user) {  // user Watcher ，执行用户回调cb
+      this.cb.call(this.vm, newValue, oldValue)
+    }
+
   }
   addDep (dep) {
     let id = dep.ids;

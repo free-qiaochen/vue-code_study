@@ -73,3 +73,15 @@ Vue.prototype._update = function (vnode) {
 
 > 依赖变化触发对应 dep:dep.notify()，进而触发收集 watcher（可能多个）的 update 进行更新
 > 这里 update 处做批量更新策略：queueWatcher(this);多次调用 update,希望先将 watcher 缓存下来，等同步代码结束后批量更新，里边调用了 nextTick
+
+## watch 和 computed
+
+### watch
+
+手写 watch：
+
+1. index.js 中添加 stateMixin(Vue)，扩展$watch 方法，
+2. state.js 中 initState 中添加 ininWatch();
+3. Watcher 修改 getter 和 run()方法，
+
+### computed
