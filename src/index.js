@@ -1,3 +1,4 @@
+import { initGlobalApi } from "./global-api/index";
 import { initMixin } from "./init";
 import { lifecycleMixin } from "./lifecycle";
 import { renderMixin } from './render'
@@ -14,6 +15,9 @@ initMixin(Vue)
 renderMixin(Vue)// _render
 lifecycleMixin(Vue)  // _update
 stateMixin(Vue)  // $watch
+
+// 在类上扩展的Vue.mixin
+initGlobalApi(Vue);
 export default Vue
 
 // 初次渲染过程：

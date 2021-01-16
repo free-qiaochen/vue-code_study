@@ -14,7 +14,7 @@ let vm = new Vue({
 vm.$mount('#app')
 ```
 
-## 初始化流程：
+## 1.初始化流程：
 
 ```js
 //响应式流程： new Vue()-- > this._init(options)-->1.initState(vm)-->initData(vm)-->observe(data)-->new Observer(data)--> observeArray(data),walk(data)/遍历data对象defineReactive(data,key,data[key])-->observe(value)会深层劫持,Object.defineProperty(data,key,handlers)属性劫持--(set中用户新赋值的数据也要observe(newVal)进行响应化处理)---->
@@ -34,7 +34,7 @@ vm.$mount('#app')
 // 组件化
 ```
 
-## 更新和依赖收集
+## 2.更新和依赖收集
 
 - 在没有更新机制前，每次数据变化需要手动 render，update，进行页面全量重渲染
 
@@ -74,7 +74,7 @@ Vue.prototype._update = function (vnode) {
 > 依赖变化触发对应 dep:dep.notify()，进而触发收集 watcher（可能多个）的 update 进行更新
 > 这里 update 处做批量更新策略：queueWatcher(this);多次调用 update,希望先将 watcher 缓存下来，等同步代码结束后批量更新，里边调用了 nextTick
 
-## watch 和 computed
+## 3. watch 和 computed
 
 ### watch
 
@@ -143,4 +143,56 @@ function defineComputed(vm, key, userDef) {
 
 3. 修改 dep.js: pushTarget()和 popTarget()对 watcher 的管理，变为栈结构（不再是同一时刻只有单一渲染 watcher 了），在写 watch 时就该有这一步了！
 
-## vue 组件
+## 6.生命周期和 vue 组件原理
+
+### 生命周期的合并
+
+1. Mixin 原理：在 global-api/index.js 中
+
+```js
+export function initGlobalAPI(Vue) {
+  Vue.options = {}
+
+  Vue.mixin = function (mixin) {
+    // 将属性合并到Vue.options上
+    this.options = mergeOptions(this.options, mixin)
+    return this
+  }
+}
+```
+
+2. 合并生命周期,存放到数据中（队列？）
+3. 调用生命周期
+
+```js
+export function callHook(vm, hook) {
+  const handlers = vm.$options[hook]
+  if (handlers) {
+    for (let i = 0; i < handlers.length; i++) {
+      handlers[i].call(vm)
+    }
+  }
+}
+```
+
+4. 初始化流程中调用生命周期
+
+```js
+Vue.prototype._init = function (options) {
+  const vm = this
+  vm.$options = mergeOptions(vm.constructor.options, options)
+  // 初始化状态
+  callHook(vm, 'beforeCreate')
+  initState(vm)
+  callHook(vm, 'created')
+  if (vm.$options.el) {
+    vm.$mount(vm.$options.el)
+  }
+}
+```
+
+### 组件
+
+## 4.未来组件化开发趋势??:WebComponent
+
+## 5.PWA (Progressive Web Apps)

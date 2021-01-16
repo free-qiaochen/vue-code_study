@@ -15,9 +15,21 @@ export function mountComponent (vm, el) {
     vm._update(vm._render()); // 后续更新可以调用updateComponent方法
     // _update()执行调用patch，用虚拟dom生成真实dom
   }
+  callHook(vm, 'beforeMount')
   // updateComponent() // 初始化和更新都走这里
   // 使用观察者模式（实现更新）：data属性是“被观察者”，页面更新是“观察者”；
   new Watcher(vm, updateComponent, () => {
     console.log('更新视图了！')
   }, true)  // 这是一个渲染Watcher，后续有其他类型Watcher
+  callHook(vm, 'mounted')
+}
+
+// 
+export function callHook (vm, hook) {
+  let handlers = vm.$options[hook];
+  if (handlers) {
+    for (let i = 0; i < handlers.length; i++) {
+      handlers[i].call(vm)
+    }
+  }
 }
