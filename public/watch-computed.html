@@ -10,7 +10,7 @@
 <body>
   <div id="app" a=1 style="color:red;background:#333;">
     hello {{obj0}}{{arr0}} world
-    <p>{{'ss'}}</p>
+    <p>{{fullName}}</p>
   </div>
   <script src="../dist/vue.js"></script>
   <script>
@@ -32,50 +32,57 @@
       computed: { // Object.defineProperty => getter
         fullName: {
           get() {
-            console.log('oooo')
+            console.log('computed get', this, this.firstName, this.lastName)
             return this.firstName + this.lastName
           },
           set(newValue) {
-            console.log(newValue);
+            console.log('computed set:', newValue);
           }
         }
       },
-      watch: { // 用户watcher
-        name(newVal, oldVal) {  // 多种方式写会覆盖
-          console.log(newVal, oldVal)
-        },
-        name: [
-          function (newVal, oldVal) {
-            console.log(newVal, oldVal)
-          },
-          function (a, b) {
-            console.log(a, b)
-          }
-        ],
-        'age.n'(newVal, oldVal) {
-          console.log(newVal, oldVal)
-        },
-      }
+      // watch: { // 用户watcher
+      //   name(newVal, oldVal) {  // 多种方式写会覆盖
+      //     console.log(newVal, oldVal)
+      //   },
+      //   name: [
+      //     function (newVal, oldVal) {
+      //       console.log(newVal, oldVal)
+      //     },
+      //     function (a, b) {
+      //       console.log(a, b)
+      //     }
+      //   ],
+      //   'age.n'(newVal, oldVal) {
+      //     console.log(newVal, oldVal)
+      //   },
+      // }
 
     })
     // vm.$mount('#app')
 
-    console.log(vm.fullName)
+    console.log(vm.fullName, vm)
+    setTimeout(() => {
+      console.log('change firstName:')
+      // vm.firstName = 'zs'
+      vm.firstName = 'zhu'
 
+      console.log(vm.fullName)
+
+    }, 1000);
 
 
     // 数据变化需要影响视图 , 数据和页面渲染关联起来
-    setTimeout(() => {
-      vm.name = 'hello';
-      vm.age.n = 'test'
-      // vm.arr0.splice(1, 2, 'xx')
-      console.log('改数据！')
-      // vm.$nextTick(() => {
-      //   console.log(vm.$el)
-      // })
-      // 在没有更新机制前，每次数据变化可以手动render，update，进行页面全量重渲染
-      // vm._update(vm._render()); // 重新调用render方法产生虚拟dom， 目前还没有diff
-    }, 2000);
+    // setTimeout(() => {
+    //   vm.name = 'hello';
+    //   vm.age.n = 'test'
+    //   // vm.arr0.splice(1, 2, 'xx')
+    //   // console.log('改数据！')
+    //   // vm.$nextTick(() => {
+    //   //   console.log(vm.$el)
+    //   // })
+    //   // 在没有更新机制前，每次数据变化可以手动render，update，进行页面全量重渲染
+    //   // vm._update(vm._render()); // 重新调用render方法产生虚拟dom， 目前还没有diff
+    // }, 2000);
   </script>
 </body>
 

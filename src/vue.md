@@ -14,7 +14,7 @@ let vm = new Vue({
 vm.$mount('#app')
 ```
 
-## 流程：
+## 初始化流程：
 
 ```js
 //响应式流程： new Vue()-- > this._init(options)-->1.initState(vm)-->initData(vm)-->observe(data)-->new Observer(data)--> observeArray(data),walk(data)/遍历data对象defineReactive(data,key,data[key])-->observe(value)会深层劫持,Object.defineProperty(data,key,handlers)属性劫持--(set中用户新赋值的数据也要observe(newVal)进行响应化处理)---->
@@ -82,6 +82,65 @@ Vue.prototype._update = function (vnode) {
 
 1. index.js 中添加 stateMixin(Vue)，扩展$watch 方法，
 2. state.js 中 initState 中添加 ininWatch();
-3. Watcher 修改 getter 和 run()方法，
+3. Watcher 修改 getter 和 run()方法，（数据变化，触发 watcher.run 调用 user 的 cb 回调）
 
 ### computed
+
+1. state.js 中添加 initComputed(vm,opts.computed);
+   - 遍历 computed 的 key，给每个 key 实例一个 Watcher：new Watcher(vm, getter, () => { }, { lazy: true });
+   - // 将 key 定义在 vm 上
+     defineComputed(vm, key, userDef)
+
+```js
+function initComputed(vm, computed) {
+  const watchers = (vm._computedWatchers = {})
+  for (const key in computed) {
+    // 校验
+    const userDef = computed[key]
+    // 依赖的属性变化就重新取值 get
+    let getter = typeof userDef == 'function' ? userDef : userDef.get
+    // 每个计算属性本质是watcher
+    // 将watcher 和属性做一个映射；
+    watchers[key] = new Watcher(vm, getter, () => {}, { lazy: true }) // 默认不执行
+    // 将key定义在vm上
+    defineComputed(vm, key, userDef)
+  }
+}
+function createComputedGetter(key) {
+  return function computedGetter() {
+    // 取计算属性的值，走的是这个函数
+    // this._computedWatchers 包含着所有计算属性
+    // 通过key可以拿到对应watcher，这个watcher中包含了getter
+    let watcher = this._computedWatchers[key]
+    if (watcher.dirty) {
+      // 依据dirty属性，来判断是否需要重新求值
+      watcher.evaluate() // 执行this.get()
+    }
+    // 如果当前取完值后，Dep.target还有值，需要继续向上收集？？？
+    if (Dep.target) {
+      // 计算属性内部依赖两个dep：firstName,lastName
+      watcher.depend() // watcher里对应了多个dep，watcher上新加depend方法，
+    }
+    console.log('---computed,key:', key, watcher.value)
+    return watcher.value
+  }
+}
+
+function defineComputed(vm, key, userDef) {
+  let sharedProperty = {}
+  if (typeof userDef == 'function') {
+    sharedProperty.get = userDef
+  } else {
+    sharedProperty.get = createComputedGetter(key)
+    sharedProperty.set = userDef.set // 用户的set触发
+  }
+  Object.defineProperty(vm, key, sharedProperty) // computed本质也是利用defineProperty
+}
+```
+
+2. 修改 watcher.js:添加 evaluate()方法，depend()方法，
+   update()方法中给 computed 的 eatcher 添加 dirty 标记为 true(走到 update 说明该 watcher 依赖的数据变化了，set 有新旧值比较)；
+
+3. 修改 dep.js: pushTarget()和 popTarget()对 watcher 的管理，变为栈结构（不再是同一时刻只有单一渲染 watcher 了），在写 watch 时就该有这一步了！
+
+## vue 组件

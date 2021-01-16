@@ -13,7 +13,7 @@ class Watcher {
     // ---watch，computed新加属性---
     this.user = !!options.user;// 是否是用户watcher，
     this.lazy = !!options.lazy;
-    this.dirty = options.dirty; // 如果是计算属性的watcher，默认lazy:true,dirty:true;
+    this.dirty = options.lazy; // 如果是计算属性的watcher，默认lazy:true,dirty:true;
     this.cb = cb;
     this.options = options;
     this.id = id++
@@ -43,18 +43,23 @@ class Watcher {
     // 希望一个属性可以对应多个watcher，同时一个watcher可以对应多个属性
     pushTarget(this); // Dep.target=watcher
     // console.log('run更新！');
-    const value = this.getter(this.vm);  // 调用vm._update(vm._render());render（）方法，会去vm上取值，
+    const value = this.getter.call(this.vm);  // 调用vm._update(vm._render());render（）方法，会去vm上取值，
     popTarget();  // Dep.target = null,如果Dep.target有值，说明在Watcher中使用了，（页面用到了）
     return value
   }
   update () {// vue中的更新操作是异步的，
     console.log('调用update了')
-    // this.run()
-    queueWatcher(this);// 多次调用update,希望先将watcher缓存下来，等同步代码结束后批量更新
+    if (this.lazy) {  // 走到update说明依赖变了
+      this.dirty = true
+    } else {
+      // this.run()
+      queueWatcher(this);// 多次调用update,希望先将watcher缓存下来，等同步代码结束后批量更新
+    }
   }
   run () {  //??
     let newValue = this.get();
     let oldValue = this.value;
+    this.value = newValue;  // 为了保证下一次更新时，上一次的最新值是下一次的老值
     if (this.user) {  // user Watcher ，执行用户回调cb
       this.cb.call(this.vm, newValue, oldValue)
     }
@@ -66,6 +71,17 @@ class Watcher {
       this.depsId.add(id)
       this.deps.push(dep) // watcher存dep
       dep.addSub(this); // dep 存watcher（调用dep的方法）
+    }
+  }
+  evaluate () {
+    this.dirty = false; // 为false表示取过值了
+    this.value = this.get();  // 用户的getter执行
+  }
+  depend () {
+    let i = this.deps.length;
+    console.log('watcher dependLength:', i)
+    while (i--) {
+      this.deps[i].depend(); //lastName，firstName收集渲染watcher
     }
   }
 }

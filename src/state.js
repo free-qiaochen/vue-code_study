@@ -2,6 +2,7 @@
 import { isFunction } from './utils'
 import { observe } from './observer/index'
 import Watcher from './observer/watcher';
+import Dep from './observer/dep';
 
 
 /**
@@ -21,7 +22,7 @@ export function initState (vm) {
     initData(vm)
   }
   if (opts.computed) {  // computed初始化
-    // initComputed(vm, opts.computed)
+    initComputed(vm, opts.computed)
   }
   if (opts.watch) { // watch 初始化
     initWatch(vm, opts.watch)
@@ -66,4 +67,48 @@ function initWatch (vm, watch) {
 }
 function createWatcher (vm, key, handler) {
   return vm.$watch(key, handler)
+}
+
+// ---computed----
+function initComputed (vm, computed) {
+  const watchers = vm._computedWatchers = {};
+  for (const key in computed) {
+    // 校验
+    const userDef = computed[key]
+    // 依赖的属性变化就重新取值 get
+    let getter = typeof userDef == 'function' ? userDef : userDef.get;
+    // 每个计算属性本质是watcher
+    // 将watcher 和属性做一个映射；
+    watchers[key] = new Watcher(vm, getter, () => { }, { lazy: true }); // 默认不执行
+    // 将key定义在vm上
+    defineComputed(vm, key, userDef)
+  }
+}
+
+function createComputedGetter (key) {
+  return function computedGetter () { // 取计算属性的值，走的是这个函数
+    // this._computedWatchers 包含着所有计算属性
+    // 通过key可以拿到对应watcher，这个watcher中包含了getter
+    let watcher = this._computedWatchers[key]
+    if (watcher.dirty) {  // 依据dirty属性，来判断是否需要重新求值
+      watcher.evaluate(); // 执行this.get()
+    }
+    // 如果当前取完值后，Dep.target还有值，需要继续向上收集？？？
+    if (Dep.target) { // 计算属性内部依赖两个dep：firstName,lastName
+      watcher.depend();// watcher里对应了多个dep，watcher上新加depend方法，
+    }
+    console.log('---computed,key:',key,watcher.value)
+    return watcher.value
+  }
+}
+
+function defineComputed (vm, key, userDef) {
+  let sharedProperty = {}
+  if (typeof userDef == 'function') {
+    sharedProperty.get = userDef;
+  } else {
+    sharedProperty.get = createComputedGetter(key);
+    sharedProperty.set = userDef.set; // 用户的set触发
+  }
+  Object.defineProperty(vm, key, sharedProperty); // computed本质也是利用defineProperty
 }

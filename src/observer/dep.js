@@ -18,11 +18,17 @@ class Dep {// 每个属性都给分配一个dep（new Dep()），dep可以来存
   }
 }
 Dep.target = null;  // 全局唯一
+
+let stack = []; // 存放watcher的栈，dep里会同时存放多个watcher
+
 export function pushTarget (watcher) {
   Dep.target = watcher
+  stack.push(watcher)
+  console.log(stack)
 }
-export function popTarget (watcher) {
-  Dep.target = null
+export function popTarget () {
+  stack.pop();
+  Dep.target = stack[stack.length - 1]
 }
 
 export default Dep
