@@ -7,6 +7,11 @@ class HTTP {
     this.queue = {}
   }
   setInterceptor (instance, url) {
-
+    instance.interceptors.request.use((config) =>{
+      // 开启loading，自己找地方显示
+      if (Object.keys(this.queue).length === 0) {
+        // 开loading
+      }
+    })
   }
 }
