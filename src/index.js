@@ -6,6 +6,7 @@ import { stateMixin } from "./state";
 function Vue (options) {
   // options 是用户传入的选项
   console.log('options:', options)
+  // debugger
   this._init(options);  // 初始化操作
 }
 

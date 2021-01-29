@@ -1,4 +1,6 @@
 import { mergeOptions } from "../utils";
+import initAssetRegisters from "./component";
+import initExtend from "./extend";
 
 export function initGlobalApi (Vue) {
   Vue.options = {}; // 用来存放全局配置，每个组件初始化时都会和options选项进行合并；
@@ -11,8 +13,14 @@ export function initGlobalApi (Vue) {
   }
 
 
-  // Vue.options._base = Vue; // 无论后续创建多少个子类，都可以通过_base找到Vue
-  // Vue.options.components = {};
+  Vue.options._base = Vue; // 无论后续创建多少个子类，都可以通过_base找到Vue
+  Vue.options.components = {};
+
+  // initExtend
+  initExtend(Vue);
+  // 注册API方法
+  initAssetRegisters(Vue);
+
   // Vue.component = function (id, definition) {
   //   // 保证组价的隔离，每个组件都会产生一个新的类，去继承父类；
   //   definition = this.options._base.extend(definition);

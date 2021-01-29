@@ -51,17 +51,18 @@ lifeCycleHooks.forEach(hook => {
   strats[hook] = mergeHook
 })
 
-// strats.components = function (parentVal, childVal) {
-//   // Vue.options.components
-//   let options = Object.create(parentVal);// 根据父对象构造一个新对象 options.__proto__= parentVal
-//   if (childVal) {
-//     for (let key in childVal) {
-//       options[key] = childVal[key]; // 直接用子的赋值，子指向父
-//     }
-//   }
-//   return options
-// }
+strats.components = function (parentVal, childVal) {
+  // Vue.options.components
+  let options = Object.create(parentVal);// 根据父对象构造一个新对象 options.__proto__= parentVal
+  if (childVal) {
+    for (let key in childVal) {
+      options[key] = childVal[key]; // 直接用子的赋值，子指向父
+    }
+  }
+  return options
+}
 
+// ？？？ mergeOptions 部分待学习
 // 合并options,可能是data，method，生命周期等，不同选项有不同的合并策略
 export function mergeOptions (parent, child) {
   const options = {}; // 合并后的结果
@@ -86,8 +87,9 @@ export function mergeOptions (parent, child) {
         options[key] = { ...parentVal, ...childVal }
       } else {
         // 父有，子没有
-        options[key] = parent[key]
-        // options[key] = child[key] || parent[key];
+        console.log('key merge:', key, parent, child)
+        // options[key] = parent[key]
+        options[key] = child[key] || parent[key];
       }
     }
   }

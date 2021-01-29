@@ -193,6 +193,37 @@ Vue.prototype._init = function (options) {
 
 ### 组件
 
+组件这个属性 components 的合并，extend()方法
+
+- 全局组件注册，会调用 Vue.extend()方法，返回组件的构造函数(继承 Vue 的原型，合并 options)
+
+> 在 global-api 模块，给 Vue 上注册方法(Vue.component=fn,Vue.extend=fn)
+
+```js
+Vue.component = function (id, definition) {
+  definition.name = definition.name || id
+  definition = this.options._base.extend(definition)
+  this.options['components'][id] = definition
+}
+Vue.extend = function (extendOptions) {
+  const Super = this
+  const Sub = function VueComponent(options) {
+    this._init(options)
+  }
+  Sub.cid = cid++
+  Sub.prototype = Object.create(Super.prototype)
+  Sub.prototype.constructor = Sub
+  Sub.options = mergeOptions(Super.options, extendOptions) // mergeOptions方法采用策略模式进行合并，组件属性的合并有父子指向__proto__层层查找
+  return Sub
+}
+```
+
+- 局部组件：
+
+#### 组件初始化
+
+#### 组件渲染
+
 ## 4.未来组件化开发趋势??:WebComponent
 
 ## 5.PWA (Progressive Web Apps)
