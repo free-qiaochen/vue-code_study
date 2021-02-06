@@ -63,7 +63,10 @@ Vue.prototype._update = function (vnode) {
 
 ### 依赖收集
 
-> 每个属性都要有一个 dep,每个 dep 中存放着 watcher,同一个 watcher 会被多个 dep 所记录
+> 每个属性都有一个 dep(初始化时添加的，递归data数据中的对象数据，拦截实现响应式),
+> render()函数执行，会取值，触发数据拦截中的get方法，此时该数据的dep进行依赖收集，
+> 每个 dep 中存放着 watcher,同一个 watcher 会被多个 dep 所记录，watcher也存放dep形成双向存储，
+> 数据变化触发set，通过其dep收集的依赖派发更新，dep.notify();对应收集的watcher批量更新；
 
 1. 在渲染时存储 watcher
 2. 对象依赖收集
@@ -71,7 +74,7 @@ Vue.prototype._update = function (vnode) {
 
 ## 更新去抖动，合并 ing
 
-> 依赖变化触发对应 dep:dep.notify()，进而触发收集 watcher（可能多个）的 update 进行更新
+> 依赖(的数据)变化触发对应 dep:dep.notify()，进而触发收集 watcher（可能多个）的 update 进行更新
 > 这里 update 处做批量更新策略：queueWatcher(this);多次调用 update,希望先将 watcher 缓存下来，等同步代码结束后批量更新，里边调用了 nextTick
 
 ## 3. watch 和 computed
