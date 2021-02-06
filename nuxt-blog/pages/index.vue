@@ -6,7 +6,6 @@
         nuxt-blog
       </h1>
       <div class="links">
-        <nuxt-link>about</nuxt-link>
         <a
           href="https://nuxtjs.org/"
           target="_blank"
