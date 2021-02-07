@@ -14,5 +14,12 @@ module.exports = {
   plugins: [
   ],
   // add your custom rules here
-  rules: {}
+  rules: {
+    'vue/max-attributes-per-line': 'off',
+    'vue/html-closing-bracket-newline': 0,
+    'space-before-function-paren': 0,
+    'no-console': 0,
+    'no-lonely-if': 0,
+    'no-constant-condition': 0
+  }
 }

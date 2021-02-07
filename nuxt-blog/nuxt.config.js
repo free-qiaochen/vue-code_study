@@ -20,7 +20,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '@/plugins/element-ui'
+    '@/plugins/element-ui',
+    '@/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -29,7 +30,7 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module',
+    '@nuxtjs/eslint-module'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -38,9 +39,11 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/style-resources', // 使用自动注入功能
+    'cookie-universal-nuxt' // app
   ],
-  styleResources:{
-    scss:[
+  styleResources: {
+    scss: [
       '@/assets/_var.scss'
     ]
   },
@@ -56,6 +59,14 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: [/^element-ui/],
+    transpile: [/^element-ui/]
+  },
+  router: {
+    middleware: 'auth'
+  },
+  proxy: { // 内置代理功能
+    '/api/': {
+      target: 'http://localhost:7001/'
+    }
   }
 }

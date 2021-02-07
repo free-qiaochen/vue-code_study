@@ -6,12 +6,10 @@
         nuxt-blog
       </h1>
       <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
+        <a target="_blank"
+           href="https://nuxtjs.org/"
+           rel="noopener noreferrer"
+           class="button--green">
           Documentation
         </a>
       </div>
@@ -23,7 +21,7 @@
 export default {}
 </script>
 
-<style>
+<style lang="scss">
 .container {
   margin: 0 auto;
   min-height: 100vh;
@@ -31,9 +29,12 @@ export default {}
   justify-content: center;
   align-items: center;
   text-align: center;
+  .title {
+    color: $color;
+  }
 }
 
-.title {
+/* .title {
   font-family:
     'Quicksand',
     'Source Sans Pro',
@@ -49,17 +50,5 @@ export default {}
   font-size: 100px;
   color: #35495e;
   letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
+} */
 </style>
