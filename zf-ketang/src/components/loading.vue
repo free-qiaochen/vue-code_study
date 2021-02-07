@@ -1,3 +1,4 @@
 <template>
-  loading...
+  <!-- loading... -->
+  <van-loading type="spinner" />
 </template>

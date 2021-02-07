@@ -12,4 +12,5 @@ const loadable = (asyncFunction) => {
   }
 }
 
+// 路由切换，异步加载的loading
 export default loadable

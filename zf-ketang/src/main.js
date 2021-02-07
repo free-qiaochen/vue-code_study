@@ -3,10 +3,17 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
+import Vant from 'vant'
+import 'vant/lib/index.css'
 
-import "lib-flexible"
+import "lib-flexible" // 对应设置根字体大小
+
+// 指令？？
+
+// 过滤器？？？
 
 Vue.config.productionTip = false
+Vue.use(Vant)
 
 new Vue({
   router,
