@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>防劫持代码测试</title>
+  <script>
+    console.log(
+      "发生劫持，初始化就直接置顶的流氓行为，暂无法防御，但可以通过埋点记录LOG，向工信部投诉！!"
+    );
+  </script>
+  <!-- 防劫持 -->
+  <script shendun-eddy>
+    /**
+     * @note 防劫持代码
+     * @key MutationObserver 提供了监视对DOM树所做更改的能力
+     */
+    (function () {
+      var srcFilterTags = ["script", "iframe"];
+      // 域名白名单 可以加多个
+      var whiteList = ["zeptojs.com"];
+      var whiteListReg = [];
+
+      // 正则匹配
+      whiteList.forEach(function (wl) {
+        var wlReg = new RegExp(
+          "/.+?//" + wl + "|//" + wl + "|.+?." + wl + "|^" + wl
+        );
+        whiteListReg.push(wlReg);
+      });
+      // 白名单助手
+      var inWhileList = function (addedNode) {
+        // shendun-eddy 是script的白名单标签
+        if (
+          addedNode.src === "" &&
+          addedNode.getAttribute("shendun-eddy") !== null
+        ) {
+          return true;
+        }
+
+        var isInWhiteList = false;
+
+        whiteListReg.forEach(function (wlReg) {
+          if (wlReg.test(addedNode.src)) {
+            isInWhiteList = true;
+            return false;
+          }
+        });
+
+        return isInWhiteList;
+      };
+
+      // dom观察器
+      var mutationHandler = function (records) {
+        records.forEach(function (record) {
+          Array.prototype.slice
+            .call(record.addedNodes)
+            .forEach(function (addedNode) {
+              srcFilterTags.forEach(function (tagName) {
+                // 标签匹配 白名单匹配
+                if (
+                  addedNode.tagName === tagName.toUpperCase() &&
+                  !inWhileList(addedNode)
+                ) {
+                  addedNode.remove();
+                }
+              });
+            });
+        });
+      };
+
+      // 核心 - MutationObserver 提供了监视对DOM树所做更改的能力
+      // 优点 - 动态监听是否有非法的 iframe 和 script 代码
+      // 缺点 - 无法查找头部直接插入的代码
+      var MutationObserver =
+        window.MutationObserver ||
+        window.WebKitMutationObserver ||
+        window.MozMutationObserver,
+        observeMutationSupport = !!MutationObserver;
+      var html = document.getElementsByTagName("html")[0];
+
+      if (observeMutationSupport) {
+        new MutationObserver(mutationHandler).observe(html, {
+          childList: true,
+          subtree: true,
+        });
+      }
+
+      // 唯独直接加载的不能remove掉，异步加载的都能remove掉！！
+      // ***  记录头部的script，通知工信部 ***
+      var eleList = document.querySelectorAll("script");
+      var len = eleList.length;
+      for (var i = 0; i < len; i++) {
+        // 遍历操作
+        if (!inWhileList(eleList[i])) {
+          // do sth 这里的删除虽然已经晚了，因为头部同步JS已被执行，删除操作意义不大，但可以统计被劫持的代码是什么，记录好LOG 通知工信部
+          // sendLog
+          eleList[i].remove();
+        }
+      }
+    })();
+  </script>
+  <script>
+    console.log("劫持1");
+  </script>
+</head>
+
+<body>
+  <div>防劫持代码测试</div>
+  <div class="father">
+    <div class="bro">
+      <div class="xiongdei">
+        <script src="https://mt.cnzz.com/js/hdpi_canvas.js"></script>
+      </div>
+    </div>
+  </div>
+  <script src="http://zeptojs.com/zepto.min.js"></script>
+  <!-- 
+        http://yun.dui88.com/qiho-h5/jqg/shendun_test.js
+        里边的代码是
+        <script>
+            (function () {
+                console.log("哎哟，我来劫持你了...");
+            })();
+        </script>
+        虽然访问了这个script, 但被remove了不会执行
+    -->
+  <script src="http://yun.dui88.com/qiho-h5/jqg/shendun_test.js"></script>
+  <script>
+    console.log("劫持....");
+  </script>
+</body>
+
+</html>
