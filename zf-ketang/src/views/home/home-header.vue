@@ -37,13 +37,16 @@ export default {
 
 <style lang="scss">
 .wrapper {
-  padding-top: 48px;
+  padding-top: 60px;
+  position: relative;
+  z-index: 100;
 }
 .home-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 48px;
+  height: 60px;
+  line-height: 60px;
   background: $background;
   padding: 0 20px;
   position: fixed;
@@ -51,8 +54,14 @@ export default {
   left: 0;
   right: 0;
   img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
+  }
+}
+.van-dropdown-menu__bar {
+  height: 60px;
+  .van-dropdown-menu__title {
+    line-height: 60px;
   }
 }
 </style>

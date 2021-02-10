@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "analyze": "npm run build --analyze=true"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -23,6 +25,8 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "mocker-api": "^2.8.1",
+    "mockjs": "^1.1.0",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "style-resources-loader": "^1.3.2",

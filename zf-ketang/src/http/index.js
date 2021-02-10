@@ -1,8 +1,10 @@
 import axios from 'axios';
+import store from '../store';
+import * as Types from '@/store/action-types.js'
 
 class HttpRequest {
   constructor() {
-    this.baseURL = process.env.NODE_ENV !== 'production' ? 'http://localhost:7001' : '/'
+    this.baseURL = process.env.NODE_ENV !== 'production' ? 'http://localhost:8080' : '/'
     this.timeout = 3000;
     this.queue = {}
   }
@@ -21,7 +23,7 @@ class HttpRequest {
       // xhr.abort() 取消请求方法
       config.cancelToken = new CancelToken((c) => {
         // 存到vuex中，页面切换的时候，组件销毁时执行；c就是当前请求取消的token
-        store.commit(Types.SET_TOKEN, c);
+        // store.commit(Types.SET_TOKEN, c);
       })
       this.queue[url] = true;
       return config // 扩展的配置返回
@@ -31,7 +33,7 @@ class HttpRequest {
       if (Object.keys(this.queue).length === 0) {
         // close loading
       }
-      if (res.data.err == 0) {
+      if (res.data.code == 200) {
         return res.data.data  // 接口里自定义成功状态码
       } else {
         return Promise.reject(res.data);  // 失败排抛出异常
@@ -63,7 +65,7 @@ class HttpRequest {
       ...data
     })
   }
-  post(url, data = {}) {
+  post (url, data = {}) {
     return this.request({
       url,
       method: 'post',
