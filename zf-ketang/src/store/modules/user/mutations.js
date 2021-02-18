@@ -3,7 +3,7 @@ import * as Types from '@/store/action-types';
 const userMutations = {
   [Types.SET_USER] (state, payload) {
     state.token = payload.token
-    state.username = payload.username
+    state.username = payload.username || localStorage.getItem('username')
     state.authList = payload.authList
     // cookie -> localStorage
     if (payload.token) {
