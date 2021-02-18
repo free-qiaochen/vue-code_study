@@ -24,11 +24,15 @@
 #app {
   .van-dropdown-menu__bar,
   .van-nav-bar {
+    line-height: 60px;
     background-color: $background;
   }
   .van-dropdown-menu__title,
   .van-nav-bar__title {
     color: $color;
+  }
+  .van-nav-bar__content {
+    height: 60px;
   }
 }
 </style>

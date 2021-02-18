@@ -29,6 +29,23 @@ const response = {
 //   { url: '@/assets/home/5.jpeg' }
 // ]
 const slidesList = [1, 2, 3, 4, 5]
+const authList = [
+  {
+    path: '/profile/student-manager',
+    name: 'student',
+    auth: 'student'
+  },
+  {
+    path: '/profile/lesson-manager',
+    name: 'lesson',
+    auth: 'lesson'
+  },
+  {
+    path: '/profile/points',
+    name: 'points',
+    auth: 'points'
+  }
+]
 
 module.exports = {
   'GET /api/slider': (req, res) => {
@@ -39,5 +56,23 @@ module.exports = {
         data: Mock.mock(slidesList)
       })
     }, 2000)
+  },
+  'POST /api/login': (req, res) => {
+    console.log('req:', req)
+    const data = {
+      token: 'testToken',
+      username: req.body.username,
+      authList: authList
+    }
+    res.status(200).json(response.success(data))
+  },
+  'GET /api/validate': (req, res) => {
+    console.log('req:', req)
+    const data = {
+      token: 'testToken',
+      // username: req.body.username,
+      authList: authList
+    }
+    res.status(200).json(response.success(data))
   }
 }
