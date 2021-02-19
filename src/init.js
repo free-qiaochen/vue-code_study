@@ -32,10 +32,11 @@ export function initMixin (Vue) {
       let template = options.template
       if (!template && el) {// 用户也没有传递template 就取el的内容作为模板
         template = el.outerHTML;
-        // 模板template编译为ast语法树，转化为render函数，
-        let render = compileToFunction(template);
-        options.render = render
       }
+      // 组件的vnode转换为render函数时没有el，也需要render函数？？？
+      // 模板template编译为ast语法树，转化为render函数，
+      let render = compileToFunction(template);
+      options.render = render
     }
     // 
     mountComponent(vm, el) // 组件的挂载流程

@@ -8,6 +8,13 @@
 </head>
 
 <body>
+  <!-- 
+          1.给组件创建一个构造函数, 基于Vue
+          2.开始生成虚拟节点， 对组件进行特殊处理 data.hook = { init () {}}
+          3.生成dom元素， 如果当前虚拟节点上有hook.init属性，说明是组建
+          4.对组件进行 new 组件()初始化 再.$mount()进行挂载  => vm.$el
+          5.将组件的$el 插入到父容器中 (父组件)
+     -->
   <div id="app" a=1 style="color:red;background:#333;">
     hello {{arr0}} world
     <p>{{'fullName'}}</p>
@@ -15,7 +22,7 @@
   </div>
   <script src="../dist/vue.js"></script>
   <script>
-    Vue.component('my-button1', {  // Vue.options.components = {'my-button':fn}
+    Vue.component('my-button', {  // Vue.options.components = {'my-button':fn}
       template: '<button>hello</button>'
     })
 
@@ -34,11 +41,23 @@
           // lastName: 'feng'
         }
       },
+      beforeCreate() {
+        console.log('beforeCreate', 'parent');
+      },
+      beforeMount() {
+        console.log('beforeMount', 'parent');
+      },
+      mounted() {
+        console.log('mounted', 'parent')
+      },
       components: {
         "my-button": {
           template: '<button>world</button>',
           beforeCreate() {
             console.log('beforeCreate', 'child');
+          },
+          beforeMount() {
+            console.log('beforeMount', 'child');
           },
           mounted() {
             console.log('mounted', 'child')

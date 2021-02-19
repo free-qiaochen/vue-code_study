@@ -19,21 +19,9 @@ function createAstElement (tagName, attrs) {
   }
 }
 
-let root = null;
+// let root = null; // root需要放在parserHTML里边，外边在遇到有组件时候出bug，返回的根始终是同一个？？
 let stack = []
 
-function start (tagName, attributes) {
-  let parent = stack[stack.length - 1]
-  let element = createAstElement(tagName, attributes);
-  if (!root) {
-    root = element;
-  }
-  if (parent) {
-    element.parent = parent;  // 记录父元素是谁
-    parent.children.push(element) // 树结构存储父子节点
-  }
-  stack.push(element);
-}
 function end (tagName) {
   let last = stack.pop()
   if (last.tag !== tagName) {
@@ -55,6 +43,20 @@ function chars (text) {
  * @param {*} html 
  */
 export function parserHTML (html) {
+
+  let root = null;
+  function start (tagName, attributes) {
+    let parent = stack[stack.length - 1]
+    let element = createAstElement(tagName, attributes);
+    if (!root) {
+      root = element;
+    }
+    if (parent) {
+      element.parent = parent;  // 记录父元素是谁
+      parent.children.push(element) // 树结构存储父子节点
+    }
+    stack.push(element);
+  }
   function advance (len) {
     html = html.substring(len)
   }

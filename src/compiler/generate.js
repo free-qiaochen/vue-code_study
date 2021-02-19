@@ -2,6 +2,7 @@ const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
 
 function genProps (attrs) {// [{name:'xxx',value:'xxx'},{name:'xxx',value:'xxx'}]
   let str = '';
+  // console.log('--',attrs)
   for (let i = 0; i < attrs.length; i++) {
     let attr = attrs[i];
     if (attr.name === 'style') {

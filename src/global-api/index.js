@@ -14,7 +14,7 @@ export function initGlobalApi (Vue) {
 
 
   Vue.options._base = Vue; // 无论后续创建多少个子类，都可以通过_base找到Vue
-  Vue.options.components = {};
+  Vue.options.components = {};  // 组件
 
   // initExtend
   initExtend(Vue);
