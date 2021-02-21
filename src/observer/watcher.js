@@ -45,6 +45,8 @@ class Watcher {
     // console.log('run更新！');
     const value = this.getter.call(this.vm);  // 调用vm._update(vm._render());render（）方法，会去vm上取值，
     popTarget();  // Dep.target = null,如果Dep.target有值，说明在Watcher中使用了，（页面用到了）
+    console.log('watcher 中get的value：', value)
+    // value 在computed的watcher中有返回值
     return value
   }
   update () {// vue中的更新操作是异步的，

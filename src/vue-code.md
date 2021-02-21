@@ -1,5 +1,6 @@
 # vue2.x 简版实现流程
 
+账号：3028213607@qq.com 密码：zf1234567
 ## vue 的使用
 
 ```js
@@ -332,4 +333,80 @@ function createElm(vnode) {
 
 ## diff
 
-## vue源码
+？？？
+
+## vue 源码
+
+> 看源码，主要在 src 目录
+
+- 不能直接一个方法看到底
+- 工具方法的源码最后看 比如 mergeOptions , 单元测试查看工具方法
+
+> flow 是 vue 用来编写代码检测类型的语法
+
+> types 目录为了 vue 在使用的时候有类型提示，增加了 ts 的声名文件
+
+## es6 module -> 项目
+
+- 库框架多数都是 rollup 打包
+- npm run build 找到打包的入口( "build": "node scripts/build.js")
+  - 找到打包入口：src/platforms/web/entry-runtime-with-compiler.js;
+    运行+编译版本；
+    src/platforms/web/entry-runtime.js; 运行时版本（生产，一般工程化开发）；
+    full = 运行 runtime+编译 compile+...
+    full = Vue + Vue.compile + Vue.prototype.$mount（做的事情：没有 render，有（找到）template，把 tempalte 编译成 render 函数（compileToFunctions），再调用原有 mount，相当于 mount 的劫持）
+- 代码运行入口：src/platforms/web/runtime/index.js
+
+  > 主要：
+
+  ```js
+  // src/platforms/web/runtime/index.js
+  // 引入Vue
+  import Vue from 'core/index'
+  Vue.config 上扩展工具方法；
+  // install platform runtime directives & components 安装指令，组件
+  extend(Vue.options.directives, platformDirectives) // v-show v-model
+  extend(Vue.options.components, platformComponents) // transition transition-group
+
+  // install platform patch function
+  Vue.prototype.__patch__ = inBrowser ? patch : noop;
+  // public mount method
+  Vue.prototype.$mount = function ( // 公共的$mount方法，刚才重写的$mount 就是这个方法
+    el?: string | Element,
+    hydrating?: boolean
+  ): Component {
+    el = el && inBrowser ? query(el) : undefined
+    return mountComponent(this, el, hydrating) // 组件挂载
+  }
+  // 导出Vue
+  export default Vue
+  ```
+
+  ```js
+  // src/core/index.js
+  import Vue from './instance/index'
+  import { initGlobalAPI } from './global-api/index'
+  // 静态方法的
+  initGlobalAPI(Vue) // 初始化Vue的全局api
+  export default Vue
+  ```
+
+  ```js
+  // src/core/instance/index.js
+  function Vue(options) {
+    // vue的构造函数
+    this._init(options) // 默认调用init方法
+  }
+  // 扩展原型的
+  initMixin(Vue) //  Vue.prototype._init
+  stateMixin(Vue) // vm.$set vm.$delete $watch
+  eventsMixin(Vue) // vm.$on $emit $once  发布订阅的 组件的通信
+  lifecycleMixin(Vue) // Vue.prototype._update Vue.prototype.$destroy  Vue.prototype.$forceUpdate
+  renderMixin(Vue) //   Vue.prototype._render  $nextTick
+
+  export default Vue
+  ```
+
+- tip:
+  - el 不可以是 body 或者 document，开发报警提示(??)
+  -  _vnode.parent == $vnode  （$vnode是占位符节点，_vnode是组件的虚拟dom）
